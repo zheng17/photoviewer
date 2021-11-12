@@ -75,10 +75,25 @@
         CDVPluginResult* pluginResult = nil;
         NSString* url = [command.arguments objectAtIndex:0];
         NSString* title = [command.arguments objectAtIndex:1];
-        BOOL isShareEnabled = [[command.arguments objectAtIndex:2] boolValue];
-        showCloseBtn = [[command.arguments objectAtIndex:3] boolValue];
-        copyToReference = [[command.arguments objectAtIndex:4] boolValue];
-        headers = [self headers:[command.arguments objectAtIndex:5]];
+        BOOL isShareEnabled = YES;
+        if([command.arguments objectAtIndex:2] != nil){
+            isShareEnabled = [[command.arguments objectAtIndex:2] boolValue];
+        }
+        if([command.arguments objectAtIndex:3] != [NSNull null]){
+            showCloseBtn = [[command.arguments objectAtIndex:3] boolValue];
+        }else{
+            showCloseBtn = YES;
+        }
+        if([command.arguments objectAtIndex:4] != [NSNull null]){
+            copyToReference = [[command.arguments objectAtIndex:4] boolValue];
+        }else{
+            copyToReference = NO;
+        }
+//                if([command.arguments objectAtIndex:2] != nil){
+        if([command.arguments objectAtIndex:5] != [NSNull null]){
+            headers = [self headers:[command.arguments objectAtIndex:5]];
+        }
+//                }
         
         if ([url rangeOfString:@"http"].location == 0) {
             copyToReference = true;
@@ -116,12 +131,24 @@
                         [activityIndicator stopAnimating];
                         [self closeImage];
                         // show an alert to the user
-                        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Photo viewer error"
-                                                                        message:@"The file to show is not a valid image, or could not be loaded."
-                                                                       delegate:self
-                                                              cancelButtonTitle:@"OK"
-                                                              otherButtonTitles:nil];
-                        [alert show];
+                        UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Photo viewer error" message:@"The file to show is not a valid image, or could not be loaded." preferredStyle:UIAlertControllerStyleAlert];
+
+                        UIAlertAction *ok = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+                                                //button click event
+                                            }];
+//                        UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:nil];
+//                        [alert addAction:cancel];
+                        [alert addAction:ok];
+                        UIViewController *vc = [[[[UIApplication sharedApplication] delegate] window] rootViewController];
+                            [vc presentViewController:alert animated:YES completion:nil];
+//                        [self viewController:presentViewController:alert animated:YES completion:nil];
+                        
+//                        UIAlertController *alert = [[UIAlertController alloc]  alertControllerWithTitle:@"
+//                                                                        message:@""
+//                                                                       delegate:self
+//                                                              cancelButtonTitle:@"OK"
+//                                                              otherButtonTitles:nil];
+//                        [alert show];
                     });
                 }
             }];
